@@ -37,7 +37,7 @@
             flex-direction: column;
         }
 
-        /* Top Role Switcher Header */
+        /* Top Bar Switcher Demo */
         .role-bar {
             background-color: #0f172a;
             color: #f8fafc;
@@ -106,7 +106,7 @@
             color: var(--text-muted);
         }
 
-        /* Main View Wrapper */
+        /* Main Container */
         .main-container {
             flex: 1;
             padding: 25px 30px;
@@ -120,29 +120,7 @@
             display: block;
         }
 
-        /* LOGIN VIEW */
-        .login-box {
-            max-width: 420px;
-            margin: 50px auto;
-            background: white;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-        }
-
-        .login-box h2 {
-            margin-bottom: 5px;
-            color: var(--primary-dark);
-            text-align: center;
-        }
-
-        .login-box p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
+        /* Form Controls */
         .form-group {
             margin-bottom: 16px;
         }
@@ -173,6 +151,29 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
+        }
+
+        /* LOGIN VIEW */
+        .login-box {
+            max-width: 420px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .login-box h2 {
+            margin-bottom: 5px;
+            color: var(--primary-dark);
+            text-align: center;
+        }
+
+        .login-box p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            text-align: center;
         }
 
         /* DASHBOARD ADMIN VIEW */
@@ -218,6 +219,41 @@
             padding: 25px;
         }
 
+        .card-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .btn-action {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-excel { background: #10b981; color: white; }
+        .btn-word { background: #2563eb; color: white; }
+        .btn-warning { background: #f59e0b; color: white; }
+
+        .token-display {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--primary);
+            background: #e0e7ff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
         .table-custom {
             width: 100%;
             border-collapse: collapse;
@@ -236,7 +272,7 @@
             color: #475569;
         }
 
-        /* STUDENT EXAM VIEW */
+        /* EXAM VIEW */
         .exam-layout {
             display: grid;
             grid-template-columns: 1fr 300px;
@@ -302,16 +338,35 @@
 
         .q-num.done { background: #dcfce7; color: #166534; border-color: #86efac; }
         .q-num.current { background: #2563eb; color: white; border-color: #2563eb; }
+
+        /* Modal Lock Screen */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.65);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
 
-    <!-- TOP ROLE SWITCHER FOR DEMO/TESTING -->
+    <!-- TOP ROLE SWITCHER FOR DEMO -->
     <div class="role-bar">
         <span><i class="fa-solid fa-eye"></i> Mode Tampilan Demo:</span>
         <div class="role-buttons">
-            <button class="role-btn active" onclick="switchView('viewLogin', this)">Login</button>
-            <button class="role-btn" onclick="switchView('viewAdmin', this)">Dashboard Admin/Guru</button>
+            <button class="role-btn active" onclick="switchView('viewLogin', this)">Login Siswa</button>
+            <button class="role-btn" onclick="switchView('viewAdmin', this)">Dashboard Admin / Rilis Token</button>
             <button class="role-btn" onclick="switchView('viewExam', this)">Lembar Ujian Siswa</button>
         </div>
     </div>
@@ -325,7 +380,7 @@
                 <p>Sistem Ujian Online CBT & Bank Soal</p>
             </div>
         </div>
-        <div id="navUserStatus">
+        <div>
             <span style="font-size:0.85rem; color: var(--text-muted);"><i class="fa-solid fa-circle-user"></i> Admin Ardin Yusuf</span>
         </div>
     </nav>
@@ -338,14 +393,14 @@
             <div class="login-box">
                 <h2>Login Ujian</h2>
                 <p>Masukkan Username / NISN dan Token Ujian</p>
-                <form onsubmit="event.preventDefault(); switchView('viewExam');">
+                <form onsubmit="event.preventDefault(); switchView('viewExam'); startExamSecurity();">
                     <div class="form-group">
                         <label>Username / NISN</label>
-                        <input type="text" class="form-control" placeholder="Masukkan ID / NISN" required value="2026001">
+                        <input type="text" class="form-control" required value="2026001">
                     </div>
                     <div class="form-group">
                         <label>Password / Token Ujian</label>
-                        <input type="password" class="form-control" placeholder="Token 6 Karakter" required value="PLM01">
+                        <input type="text" id="loginToken" class="form-control" required value="PLM01" style="text-transform:uppercase;">
                     </div>
                     <button type="submit" class="btn-submit"><i class="fa-solid fa-right-to-bracket"></i> Masuk Ujian</button>
                 </form>
@@ -357,34 +412,104 @@
             <div class="admin-layout">
                 <div class="sidebar">
                     <ul class="menu-list">
-                        <li class="menu-item active"><i class="fa-solid fa-chart-line"></i> Dashboard</li>
-                        <li class="menu-item"><i class="fa-solid fa-users"></i> Data Siswa (Students)</li>
-                        <li class="menu-item"><i class="fa-solid fa-book-open"></i> Bank Soal (Questions)</li>
-                        <li class="menu-item"><i class="fa-solid fa-key"></i> Token & Jadwal</li>
-                        <li class="menu-item"><i class="fa-solid fa-square-poll-vertical"></i> Rekap Nilai</li>
+                        <li class="menu-item active" onclick="switchAdminTab('tabToken', this)"><i class="fa-solid fa-key"></i> Rilis Token Ujian</li>
+                        <li class="menu-item" onclick="switchAdminTab('tabSoal', this)"><i class="fa-solid fa-book-open"></i> Bank Soal & Import</li>
+                        <li class="menu-item" onclick="switchAdminTab('tabNilai', this)"><i class="fa-solid fa-square-poll-vertical"></i> Rekap Nilai Siswa</li>
                     </ul>
                 </div>
+
                 <div class="admin-content">
-                    <h2><i class="fa-solid fa-database"></i> Integrasi Database (17 Sheet DB_UJIAN_ARDIN_YUSUF)</h2>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">Monitoring data real-time dari Google Sheets</p>
                     
-                    <table class="table-custom">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Sheet</th>
-                                <th>Deskripsi Fungsi</th>
-                                <th>Status Koneksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1</td><td>Users</td><td>Data akun Admin & Guru</td><td><span style="color:green; font-weight:600;">Active</span></td></tr>
-                            <tr><td>2</td><td>Students</td><td>Data Induk Siswa & Kelas</td><td><span style="color:green; font-weight:600;">Active</span></td></tr>
-                            <tr><td>3</td><td>QuestionBank</td><td>Daftar Butir Soal (PG/Essay)</td><td><span style="color:green; font-weight:600;">Active</span></td></tr>
-                            <tr><td>4</td><td>Exams / Schedule</td><td>Token Ujian & Durasi Waktu</td><td><span style="color:green; font-weight:600;">Active</span></td></tr>
-                            <tr><td>5</td><td>StudentAnswers</td><td>Rekap Jawaban & Skor Nilai</td><td><span style="color:green; font-weight:600;">Active</span></td></tr>
-                        </tbody>
-                    </table>
+                    <!-- TAB 1: RILIS TOKEN -->
+                    <div id="tabToken" class="admin-tab">
+                        <h2><i class="fa-solid fa-key"></i> Menu Rilis Token Ujian</h2>
+                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Generator token aktif untuk sesi ujian dan perbaikan kendala siswa.</p>
+
+                        <div class="card-box" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="color:var(--text-muted); font-size:0.85rem;">TOKEN AKTIF SAAT INI</h4>
+                                <div class="token-display" id="activeTokenDisplay">PLM01</div>
+                                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">Masa berlaku: 120 Menit (Otomatis Diperbarui)</p>
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <button class="btn-action btn-warning" onclick="generateNewToken()"><i class="fa-solid fa-rotate"></i> Generate Token Baru</button>
+                                <button class="btn-action btn-word" onclick="copyToken()"><i class="fa-solid fa-copy"></i> Salin Token</button>
+                            </div>
+                        </div>
+
+                        <h4>Histori Rilis Token Hari Ini</h4>
+                        <table class="table-custom">
+                            <thead>
+                                tr>
+                                    <th>No</th>
+                                    <th>Kode Token</th>
+                                    <th>Waktu Rilis</th>
+                                    <th>Dibuat Oleh</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tokenHistoryBody">
+                                <tr>
+                                    <td>1</td>
+                                    <td><strong style="color:var(--primary)">PLM01</strong></td>
+                                    <td>27/10/2026 - 08:00 WITA</td>
+                                    <td>Admin Ardin Yusuf</td>
+                                    <td><span style="color:green; font-weight:600;">Aktif</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- TAB 2: BANK SOAL & IMPORT -->
+                    <div id="tabSoal" class="admin-tab" style="display:none;">
+                        <h2><i class="fa-solid fa-file-arrow-down"></i> Download Template & Import Soal</h2>
+                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Unduh format template untuk guru mapel, lalu unggah file soal dalam format Excel atau Word.</p>
+                        
+                        <div class="card-box">
+                            <h4 style="margin-bottom: 10px;">1. Unduh Format Template Soal</h4>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn-action btn-excel" onclick="downloadTemplate('excel')"><i class="fa-solid fa-file-excel"></i> Download Template Excel (.xlsx)</button>
+                                <button class="btn-action btn-word" onclick="downloadTemplate('word')"><i class="fa-solid fa-file-word"></i> Download Template Word (.docx)</button>
+                            </div>
+                        </div>
+
+                        <div class="card-box">
+                            <h4 style="margin-bottom: 10px;">2. Upload / Import Soal (Excel / Word)</h4>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="file" class="form-control" id="fileSoal" accept=".xlsx, .xls, .docx">
+                                <button class="btn-action btn-excel" onclick="alert('Soal berhasil diimpor ke Database Google Sheets!')"><i class="fa-solid fa-upload"></i> Proses Import</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: REKAP NILAI -->
+                    <div id="tabNilai" class="admin-tab" style="display:none;">
+                        <h2><i class="fa-solid fa-square-poll-vertical"></i> Rekap Nilai Ujian Siswa</h2>
+                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Hasil pengerjaan ujian real-time tersimpan di database.</p>
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>NISN</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Kelas</th>
+                                    <th>Mata Pelajaran</th>
+                                    <th>Nilai Akhir</th>
+                                    <th>Status Ujian</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2026001</td>
+                                    <td>Ahmad Faisal</td>
+                                    <td>VII-A</td>
+                                    <td>Bahasa Indonesia</td>
+                                    <td><strong>88.5</strong></td>
+                                    <td><span style="color:green; font-weight:600;">Selesai</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -394,7 +519,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <div>
                     <h3>Asesmen Sumatif Akhir Semester (ASAS)</h3>
-                    <p style="font-size:0.85rem; color:var(--text-muted);">Mata Pelajaran: Bahasa Indonesia | Kelas: VII</p>
+                    <p style="font-size:0.85rem; color:var(--text-muted);">Mata Pelajaran: Bahasa Indonesia | Status: <span style="color:green; font-weight:600;">Sedang Berlangsung</span></p>
                 </div>
                 <div class="timer-badge">
                     <i class="fa-solid fa-clock"></i> Sisa Waktu: <span id="timer">01:29:45</span>
@@ -421,11 +546,6 @@
                         <div class="q-num done">3</div>
                         <div class="q-num">4</div>
                         <div class="q-num">5</div>
-                        <div class="q-num">6</div>
-                        <div class="q-num">7</div>
-                        <div class="q-num">8</div>
-                        <div class="q-num">9</div>
-                        <div class="q-num">10</div>
                     </div>
                 </div>
             </div>
@@ -433,7 +553,20 @@
 
     </div>
 
+    <!-- MODAL ANTI-CHEAT (TOKEN KUNCI KEMBALI) -->
+    <div id="cheatModal" class="modal-overlay">
+        <div class="modal-box">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: #ef4444; margin-bottom: 15px;"></i>
+            <h3 style="color: #1e3c72; margin-bottom: 10px;">Ujian Dikunci!</h3>
+            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Anda terdeteksi berpindah tab atau keluar dari halaman ujian. Minta <strong>Token Baru</strong> kepada Admin/Pengawas untuk membuka kunci.</p>
+            <input type="text" id="retokenInput" class="form-control" placeholder="Masukkan Token Pengawas" style="margin-bottom: 15px; text-align: center; font-weight:700; text-transform:uppercase;">
+            <button class="btn-submit" onclick="verifyRetoken()">Buka Kunci Ujian</button>
+        </div>
+    </div>
+
     <script>
+        let currentActiveToken = "PLM01";
+
         function switchView(viewId, btn) {
             document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -441,6 +574,77 @@
             if(btn) {
                 document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+            }
+        }
+
+        function switchAdminTab(tabId, el) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
+            document.getElementById(tabId).style.display = 'block';
+            
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        // Generator Token Acak
+        function generateNewToken() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let newToken = '';
+            for (let i = 0; i < 5; i++) {
+                newToken += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            currentActiveToken = newToken;
+            document.getElementById('activeTokenDisplay').innerText = newToken;
+
+            // Tambahkan ke histori
+            const tbody = document.getElementById('tokenHistoryBody');
+            const now = new Date().toLocaleTimeString('id-ID');
+            const newRow = `<tr>
+                <td>${tbody.children.length + 1}</td>
+                <td><strong style="color:var(--primary)">${newToken}</strong></td>
+                <td>27/10/2026 - ${now} WITA</td>
+                <td>Admin Ardin Yusuf</td>
+                <td><span style="color:green; font-weight:600;">Aktif</span></td>
+            </tr>`;
+            tbody.innerHTML = newRow + tbody.innerHTML;
+        }
+
+        function copyToken() {
+            navigator.clipboard.writeText(currentActiveToken);
+            alert("Token '" + currentActiveToken + "' berhasil disalin!");
+        }
+
+        // Fitur Download Template Excel / Word
+        function downloadTemplate(type) {
+            let filename = type === 'excel' ? 'Template_Soal_SMPN1Plampang.xlsx' : 'Template_Soal_SMPN1Plampang.docx';
+            let dummyContent = "Template Format Soal Ujian SMPN 1 Plampang";
+            let blob = new Blob([dummyContent], { type: "text/plain;charset=utf-8" });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        // Sistem Pengamanan Anti-Cheat (Deteksi Pindah Tab)
+        let examActive = false;
+
+        function startExamSecurity() {
+            examActive = true;
+        }
+
+        document.addEventListener("visibilitychange", function() {
+            if (examActive && document.hidden) {
+                document.getElementById('cheatModal').style.display = 'flex';
+            }
+        });
+
+        function verifyRetoken() {
+            let inputTok = document.getElementById('retokenInput').value.trim().toUpperCase();
+            if(inputTok === currentActiveToken) {
+                document.getElementById('cheatModal').style.display = 'none';
+                document.getElementById('retokenInput').value = "";
+                alert("Ujian berhasil dibuka kembali. Silakan lanjutkan pengerjaan.");
+            } else {
+                alert("Token tidak valid! Silakan minta token aktif terbaru dari Admin/Pengawas.");
             }
         }
     </script>

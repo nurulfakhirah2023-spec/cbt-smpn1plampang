@@ -517,25 +517,29 @@
 
             <div class="exam-layout">
                 <div class="question-card">
-                    <h4>Soal No. 1</h4>
-                    <p style="margin-top:10px; line-height:1.6;">Kalimat berikut yang merupakan kalimat deskripsi yang tepat adalah...</p>
-                    <div class="option-list">
+                    <h4 id="questionTitle">Soal No. 1</h4>
+                    <p id="questionText" style="margin-top:10px; line-height:1.6;">Kalimat berikut yang merupakan kalimat deskripsi yang tepat adalah...</p>
+                    <div class="option-list" id="optionList">
                         <label class="option-item"><input type="radio" name="opt"> A. Candi Borobudur dibangun pada abad ke-8.</label>
                         <label class="option-item"><input type="radio" name="opt"> B. Pantai Kuta memiliki pasir putih yang lembut dan air laut jernih membiru.</label>
                         <label class="option-item"><input type="radio" name="opt"> C. Gunung Rinjani terletak di Pulau Lombok, Nusa Tenggara Barat.</label>
                         <label class="option-item"><input type="radio" name="opt"> D. Indonesia memiliki keberagaman suku dan budaya.</label>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+                        <button class="btn-action" style="background:#cbd5e1; color:#0f172a;" onclick="prevQuestion()"><i class="fa-solid fa-arrow-left"></i> Sebelumnya</button>
+                        <button class="btn-action btn-excel" onclick="nextQuestion()">Selanjutnya <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                     <button class="btn-submit" style="width: auto; padding: 10px 20px; margin-top: 20px;" onclick="submitExamFinished()">Selesaikan Ujian</button>
                 </div>
 
                 <div class="sidebar">
                     <h4>Navigasi Soal</h4>
-                    <div class="q-grid">
-                        <div class="q-num current">1</div>
-                        <div class="q-num done">2</div>
-                        <div class="q-num done">3</div>
-                        <div class="q-num">4</div>
-                        <div class="q-num">5</div>
+                    <div class="q-grid" id="navGrid">
+                        <div class="q-num current" onclick="changeQuestion(1)">1</div>
+                        <div class="q-num" onclick="changeQuestion(2)">2</div>
+                        <div class="q-num" onclick="changeQuestion(3)">3</div>
+                        <div class="q-num" onclick="changeQuestion(4)">4</div>
+                        <div class="q-num" onclick="changeQuestion(5)">5</div>
                     </div>
                 </div>
             </div>
@@ -555,10 +559,64 @@
     </div>
 
     <script>
-        // URL API Google Apps Script Anda yang terhubung ke DB_UJIAN_ARDIN_YUSUF
         const API_URL = "https://script.google.com/macros/s/AKfycbyiWyhEiBOYc0u2zLYYVpLJaaOgBu6w2P5iVkmLvfcEJCLGA-VxKe5r1OCmjMNciYxQ/exec";
 
         let currentActiveToken = "PLM01";
+        let currentQuestion = 1;
+
+        // Data Simulasi Soal Ujian
+        const questionsData = {
+            1: {
+                title: "Soal No. 1",
+                text: "Kalimat berikut yang merupakan kalimat deskripsi yang tepat adalah...",
+                options: [
+                    "A. Candi Borobudur dibangun pada abad ke-8.",
+                    "B. Pantai Kuta memiliki pasir putih yang lembut dan air laut jernih membiru.",
+                    "C. Gunung Rinjani terletak di Pulau Lombok, Nusa Tenggara Barat.",
+                    "D. Indonesia memiliki keberagaman suku dan budaya."
+                ]
+            },
+            2: {
+                title: "Soal No. 2",
+                text: "Struktur teks laporan hasil observasi yang berisi pengenalan objek yang diamati disebut...",
+                options: [
+                    "A. Deskripsi bagian",
+                    "B. Pernyataan umum / klasifikasi",
+                    "C. Kesimpulan",
+                    "D. Argumen penjelas"
+                ]
+            },
+            3: {
+                title: "Soal No. 3",
+                text: "Antonim dari kata 'canggih' adalah...",
+                options: [
+                    "A. Modern",
+                    "B. Kuno / Sederhana",
+                    "C. Kompleks",
+                    "D. Mutakhir"
+                ]
+            },
+            4: {
+                title: "Soal No. 4",
+                text: "Penulisan gelar dan tanda baca yang benar dalam surat dinas sekolah adalah...",
+                options: [
+                    "A. Yth. Kepala SMPN 1 Plampang",
+                    "B. Kepada Yth: Kepala SMPN 1 Plampang.",
+                    "C. Yth, Kepala Sekolah SMPN 1 Plampang",
+                    "D. Kepada Yth., Kepala SMPN 1 Plampang"
+                ]
+            },
+            5: {
+                title: "Soal No. 5",
+                text: "Unsur intrinsik yang berupa pesan atau nasihat yang ingin disampaikan pengarang melalui cerita disebut...",
+                options: [
+                    "A. Tema",
+                    "B. Alur",
+                    "C. Amanat",
+                    "D. Latar"
+                ]
+            }
+        };
 
         function switchView(viewId, btn) {
             document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
@@ -578,7 +636,44 @@
             el.classList.add('active');
         }
 
-        // Generator Token & Sinkronisasi ke Google Sheets
+        // Fungsi Navigasi Soal Ujian
+        function changeQuestion(num) {
+            currentQuestion = num;
+            const q = questionsData[num];
+            
+            document.getElementById('questionTitle').innerText = q.title;
+            document.getElementById('questionText').innerText = q.text;
+            
+            let optHTML = '';
+            q.options.forEach((opt, idx) => {
+                optHTML += `<label class="option-item"><input type="radio" name="opt"> ${opt}</label>`;
+            });
+            document.getElementById('optionList').innerHTML = optHTML;
+
+            // Update status kotak navigasi
+            const grids = document.querySelectorAll('.q-num');
+            grids.forEach((el, index) => {
+                el.classList.remove('current');
+                if(index + 1 === num) {
+                    el.classList.add('current');
+                } else {
+                    el.classList.add('done');
+                }
+            });
+        }
+
+        function nextQuestion() {
+            if(currentQuestion < 5) {
+                changeQuestion(currentQuestion + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if(currentQuestion > 1) {
+                changeQuestion(currentQuestion - 1);
+            }
+        }
+
         function generateNewToken() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let newToken = '';
@@ -588,7 +683,6 @@
             currentActiveToken = newToken;
             document.getElementById('activeTokenDisplay').innerText = newToken;
 
-            // Kirim ke Google Sheets
             fetch(API_URL, {
                 method: "POST",
                 mode: "no-cors",
@@ -598,11 +692,8 @@
                     token: newToken,
                     createdBy: "Admin Ardin Yusuf"
                 })
-            }).then(() => {
-                console.log("Token tersinkronisasi ke Google Sheets");
             }).catch(err => console.error(err));
 
-            // Tambahkan ke tabel histori
             const tbody = document.getElementById('tokenHistoryBody');
             const now = new Date().toLocaleTimeString('id-ID');
             const newRow = `<tr>
@@ -634,7 +725,6 @@
         function simulateUpload() {
             let fileInput = document.getElementById('fileSoal');
             if(fileInput.files.length > 0) {
-                // Kirim dummy sukses ke backend
                 fetch(API_URL, {
                     method: "POST",
                     mode: "no-cors",
@@ -653,7 +743,6 @@
             }
         }
 
-        // Kirim hasil ujian siswa saat selesai
         function submitExamFinished() {
             if(confirm("Apakah Anda yakin ingin menyelesaikan dan mengirim jawaban ujian?")) {
                 fetch(API_URL, {
@@ -675,9 +764,7 @@
             }
         }
 
-        // Anti-Cheat (Tab Switch Detection)
         let examActive = false;
-
         function startExamSecurity() {
             examActive = true;
         }

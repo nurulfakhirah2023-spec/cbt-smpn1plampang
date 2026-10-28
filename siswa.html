@@ -83,35 +83,69 @@
         &copy; 2026 SMPN 1 Plampang. All rights reserved.
     </footer>
 
-    <!-- Skrip JavaScript Penghubung ke Google Apps Script Anda -->
     <script>
-        // Menggunakan URL Apps Script yang sama dengan sistem utama Anda
-        const API_URL = "https://script.google.com/macros/s/AKfycbjIwyhEiBOYc0u2ZLYYvPjLaaOgBu6w2P5iVkmLvfcEJCLGA-VxKe!";
+    // URL Google Apps Script Anda
+    const API_URL = "https://script.google.com/macros/s/AKfycbjIwyhEiBOYc0u2ZLYYvPjLaaOgBu6w2P5iVkmLvfcEJCLGA-VxKe!";
 
-        function handleLoginSiswa(event) {
-            event.preventDefault();
-            const nisn = document.getElementById('nisn').value.trim();
-            const token = document.getElementById('token').value.trim().toUpperCase();
+    function handleLoginSiswa(event) {
+        event.preventDefault();
+        const nisn = document.getElementById('nisn').value.trim();
+        const token = document.getElementById('token').value.trim().toUpperCase();
 
-            if(nisn && token) {
-                // Transisi tampilan ke lembar soal
-                document.getElementById('card-login').classList.add('hidden');
-                document.getElementById('area-soal').classList.remove('hidden');
-                
-                document.getElementById('info-siswa').innerText = `NISN: ${nisn} | Token: ${token}`;
-                
-                // Di sini Anda bisa menyematkan fungsi fetch data soal dari API_URL jika diperlukan
-            } else {
-                alert('Silakan masukkan NISN dan Token dengan benar!');
-            }
+        if (!nisn || !token) {
+            alert('NISN dan Token harus diisi!');
+            return;
         }
 
-        function selesaiUjian() {
-            if(confirm('Apakah Anda yakin ingin mengumpulkan jawaban ujian ini?')) {
-                alert('Jawaban berhasil dikirim ke Google Sheets!');
-                window.location.reload();
-            }
+        // Tampilkan indikator loading
+        document.getElementById('kontainer-pertanyaan').innerHTML = '<p class="text-center text-indigo-600 font-semibold py-8">Sedang memuat soal dari database...</p>';
+
+        // Sembunyikan login, tampilkan area soal
+        document.getElementById('card-login').classList.add('hidden');
+        document.getElementById('area-soal').classList.remove('hidden');
+        document.getElementById('info-siswa').innerText = `NISN: ${nisn} | Token: ${token}`;
+
+        // Memanggil data soal dari Google Apps Script / Google Sheets
+        fetch(`${API_URL}?action=getSoal&token=${token}&nisn=${nisn}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    document.getElementById('info-mapel').innerText = `Mata Pelajaran: ${data.mapel}`;
+                    
+                    // Render soal jika data tersedia
+                    let htmlSoal = "";
+                    data.soalList.forEach((soal, index) => {
+                        htmlSoal += `
+                            <div class="p-4 border rounded-lg bg-gray-50 mb-4">
+                                <p class="font-bold text-gray-800 mb-2">${index + 1}. ${soal.pertanyaan}</p>
+                                <div class="space-y-2 text-sm text-gray-700">
+                                    <label class="block"><input type="radio" name="soal_${soal.id}" value="A"> A. ${soal.pilihanA}</label>
+                                    <label class="block"><input type="radio" name="soal_${soal.id}" value="B"> B. ${soal.pilihanB}</label>
+                                    <label class="block"><input type="radio" name="soal_${soal.id}" value="C"> C. ${soal.pilihanC}</label>
+                                    <label class="block"><input type="radio" name="soal_${soal.id}" value="D"> D. ${soal.pilihanD}</label>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('kontainer-pertanyaan').innerHTML = htmlSoal;
+
+                } else {
+                    alert(data.message || 'Token salah atau ujian tidak ditemukan!');
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Gagal terhubung ke database server ujian.');
+            });
+    }
+
+    function selesaiUjian() {
+        if (confirm('Apakah Anda yakin ingin mengumpulkan jawaban ujian ini?')) {
+            alert('Jawaban berhasil dikirim!');
+            window.location.reload();
         }
-    </script>
+    }
+</script>
 </body>
 </html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruang Ujian Siswa - SMPN 1 PLAMPANG</title>
+    <!-- Tailwind CSS untuk Desain yang Rapi dan Responsif -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Header Portal Siswa -->
+    <header class="bg-indigo-900 text-white shadow-md p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-lg font-bold">SMPN 1 PLAMPANG</h1>
+                <p class="text-xs text-indigo-200">Sistem Ujian Online (CBT) Siswa</p>
+            </div>
+            <span class="text-xs bg-indigo-700 text-indigo-100 px-3 py-1 rounded-full font-semibold">Portal Peserta Ujian</span>
+        </div>
+    </header>
+
+    <!-- Konten Utama -->
+    <main class="container mx-auto px-4 py-8 flex-grow flex items-center justify-center">
+        
+        <!-- CARD LOGIN SISWA -->
+        <div id="card-login" class="w-full max-w-md bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Login Ujian</h2>
+                <p class="text-sm text-gray-500 mt-1">Masukkan NISN dan Token yang diberikan oleh pengawas/guru.</p>
+            </div>
+
+            <form id="form-login-siswa" onsubmit="handleLoginSiswa(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">NISN / Nomor Peserta</label>
+                    <input type="text" id="nisn" required 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" 
+                        placeholder="Contoh: 2026001">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">Token Ujian</label>
+                    <input type="text" id="token" required 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg uppercase tracking-widest font-mono text-center text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                        placeholder="TOKEN" maxlength="6">
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
+                    Masuk & Mulai Ujian
+                </button>
+            </form>
+        </div>
+
+        <!-- AREA SOAL UJIAN (Awalnya Disembunyikan/Hidden, Muncul Setelah Login Berhasil) -->
+        <div id="area-soal" class="w-full max-w-3xl bg-white rounded-xl shadow-lg p-8 hidden">
+            <div class="flex justify-between items-center border-b pb-4 mb-6">
+                <div>
+                    <h3 id="info-mapel" class="text-xl font-bold text-gray-800">Mata Pelajaran: -</h3>
+                    <p id="info-siswa" class="text-sm text-gray-600">Siswa: - (NISN: -)</p>
+                </div>
+                <div id="timer-ujian" class="bg-red-100 text-red-700 px-4 py-2 rounded-lg font-mono font-bold text-sm">
+                    Sisa Waktu: 00:00:00
+                </div>
+            </div>
+
+            <!-- Tempat Render Soal Ujian Anda -->
+            <div id="kontainer-pertanyaan" class="space-y-6">
+                <!-- Soal akan dimuat otomatis oleh JavaScript dari backend Apps Script Anda -->
+                <p class="text-gray-500 italic text-center py-8">Memuat soal ujian...</p>
+            </div>
+
+            <div class="mt-8 border-t pt-4 flex justify-end">
+                <button onclick="selesaiUjian()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-lg shadow">
+                    Selesai & Kirim Jawaban
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white text-center py-4 text-xs text-gray-500 border-t">
+        &copy; 2026 SMPN 1 Plampang. All rights reserved.
+    </footer>
+
+    <!-- Skrip JavaScript Logika Sisi Klien -->
+    <script>
+        // Ganti dengan URL Web App Google Apps Script Anda yang terhubung ke Google Sheets
+        const SCRIPT_URL = "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA_DISINI";
+
+        function handleLoginSiswa(event) {
+            event.preventDefault();
+            const nisn = document.getElementById('nisn').value.trim();
+            const token = document.getElementById('token').value.trim().toUpperCase();
+
+            // Simulasi transisi tampilan (Hubungkan dengan fungsi fetch ke Google Apps Script Anda)
+            if(nisn && token) {
+                // Sembunyikan form login, tampilkan area soal
+                document.getElementById('card-login').classList.add('hidden');
+                document.getElementById('area-soal').classList.remove('hidden');
+                
+                // Contoh pengisian info siswa
+                document.getElementById('info-siswa').innerText = `NISN: ${nisn}`;
+                
+                // Catatan: Di sini Anda bisa memanggil fungsi fetch() ke Google Apps Script 
+                // untuk menarik data soal berdasarkan token yang aktif.
+            } else {
+                alert('Silakan masukkan NISN dan Token dengan benar!');
+            }
+        }
+
+        function selesaiUjian() {
+            if(confirm('Apakah Anda yakin ingin mengumpulkan jawaban ujian ini?')) {
+                alert('Jawaban berhasil dikirim! Terima kasih.');
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

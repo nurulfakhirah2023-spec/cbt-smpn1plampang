@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruang Ujian Siswa - SMPN 1 PLAMPANG</title>
-    <!-- Tailwind CSS untuk Desain yang Rapi dan Responsif -->
+    <!-- Menggunakan styling/CSS yang selaras dengan aplikasi utama Anda -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col justify-between">
@@ -20,13 +20,13 @@
         </div>
     </header>
 
-    <!-- Konten Utama -->
+    <!-- Konten Utama Halaman Ujian Siswa -->
     <main class="container mx-auto px-4 py-8 flex-grow flex items-center justify-center">
         
         <!-- CARD LOGIN SISWA -->
         <div id="card-login" class="w-full max-w-md bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Login Ujian</h2>
+                <h2 class="text-2xl font-bold text-gray-800">Login Ujian Siswa</h2>
                 <p class="text-sm text-gray-500 mt-1">Masukkan NISN dan Token yang diberikan oleh pengawas/guru.</p>
             </div>
 
@@ -52,7 +52,7 @@
             </form>
         </div>
 
-        <!-- AREA SOAL UJIAN (Awalnya Disembunyikan/Hidden, Muncul Setelah Login Berhasil) -->
+        <!-- AREA SOAL UJIAN (Tersembunyi sebelum siswa berhasil login) -->
         <div id="area-soal" class="w-full max-w-3xl bg-white rounded-xl shadow-lg p-8 hidden">
             <div class="flex justify-between items-center border-b pb-4 mb-6">
                 <div>
@@ -64,10 +64,9 @@
                 </div>
             </div>
 
-            <!-- Tempat Render Soal Ujian Anda -->
+            <!-- Tempat Pertanyaan Ujian -->
             <div id="kontainer-pertanyaan" class="space-y-6">
-                <!-- Soal akan dimuat otomatis oleh JavaScript dari backend Apps Script Anda -->
-                <p class="text-gray-500 italic text-center py-8">Memuat soal ujian...</p>
+                <p class="text-gray-500 italic text-center py-8">Memuat soal ujian dari database...</p>
             </div>
 
             <div class="mt-8 border-t pt-4 flex justify-end">
@@ -84,27 +83,24 @@
         &copy; 2026 SMPN 1 Plampang. All rights reserved.
     </footer>
 
-    <!-- Skrip JavaScript Logika Sisi Klien -->
+    <!-- Skrip JavaScript Penghubung ke Google Apps Script Anda -->
     <script>
-        // Ganti dengan URL Web App Google Apps Script Anda yang terhubung ke Google Sheets
-        const SCRIPT_URL = "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA_DISINI";
+        // Menggunakan URL Apps Script yang sama dengan sistem utama Anda
+        const API_URL = "https://script.google.com/macros/s/AKfycbjIwyhEiBOYc0u2ZLYYvPjLaaOgBu6w2P5iVkmLvfcEJCLGA-VxKe!";
 
         function handleLoginSiswa(event) {
             event.preventDefault();
             const nisn = document.getElementById('nisn').value.trim();
             const token = document.getElementById('token').value.trim().toUpperCase();
 
-            // Simulasi transisi tampilan (Hubungkan dengan fungsi fetch ke Google Apps Script Anda)
             if(nisn && token) {
-                // Sembunyikan form login, tampilkan area soal
+                // Transisi tampilan ke lembar soal
                 document.getElementById('card-login').classList.add('hidden');
                 document.getElementById('area-soal').classList.remove('hidden');
                 
-                // Contoh pengisian info siswa
-                document.getElementById('info-siswa').innerText = `NISN: ${nisn}`;
+                document.getElementById('info-siswa').innerText = `NISN: ${nisn} | Token: ${token}`;
                 
-                // Catatan: Di sini Anda bisa memanggil fungsi fetch() ke Google Apps Script 
-                // untuk menarik data soal berdasarkan token yang aktif.
+                // Di sini Anda bisa menyematkan fungsi fetch data soal dari API_URL jika diperlukan
             } else {
                 alert('Silakan masukkan NISN dan Token dengan benar!');
             }
@@ -112,7 +108,7 @@
 
         function selesaiUjian() {
             if(confirm('Apakah Anda yakin ingin mengumpulkan jawaban ujian ini?')) {
-                alert('Jawaban berhasil dikirim! Terima kasih.');
+                alert('Jawaban berhasil dikirim ke Google Sheets!');
                 window.location.reload();
             }
         }

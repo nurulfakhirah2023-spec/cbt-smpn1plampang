@@ -3,743 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Ujian Online (CBT) - SMPN 1 Plampang</title>
-    <!-- FontAwesome & Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1e40af;
-            --primary-dark: #1e3a8a;
-            --secondary: #0ea5e9;
-            --bg-body: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .role-bar {
-            background-color: #0f172a;
-            color: #f8fafc;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-        }
-
-        .role-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .role-btn {
-            background: #334155;
-            color: #fff;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .role-btn.active {
-            background: #2563eb;
-        }
-
-        .navbar {
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand-icon {
-            background: var(--primary);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .brand-text h1 {
-            font-size: 1.1rem;
-            color: var(--primary-dark);
-            font-weight: 700;
-        }
-
-        .brand-text p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .main-container {
-            flex: 1;
-            padding: 25px 30px;
-        }
-
-        .view-panel {
-            display: none;
-        }
-
-        .view-panel.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #334155;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .login-box {
-            max-width: 420px;
-            margin: 50px auto;
-            background: white;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-        }
-
-        .login-box h2 {
-            margin-bottom: 5px;
-            color: var(--primary-dark);
-            text-align: center;
-        }
-
-        .login-box p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .admin-layout {
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 20px;
-        }
-
-        .sidebar {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 15px;
-        }
-
-        .menu-list {
-            list-style: none;
-        }
-
-        .menu-item {
-            padding: 10px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #475569;
-            margin-bottom: 4px;
-        }
-
-        .menu-item:hover, .menu-item.active {
-            background: #eff6ff;
-            color: var(--primary);
-        }
-
-        .admin-content {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 25px;
-        }
-
-        .card-box {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .btn-action {
-            padding: 8px 14px;
-            border-radius: 6px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-excel { background: #10b981; color: white; }
-        .btn-word { background: #2563eb; color: white; }
-        .btn-warning { background: #f59e0b; color: white; }
-
-        .token-display {
-            font-size: 1.8rem;
-            font-weight: 800;
-            letter-spacing: 4px;
-            color: var(--primary);
-            background: #e0e7ff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        .table-custom {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .table-custom th, .table-custom td {
-            border: 1px solid var(--border-color);
-            padding: 10px 14px;
-            font-size: 0.85rem;
-            text-align: left;
-        }
-
-        .table-custom th {
-            background: #f8fafc;
-            color: #475569;
-        }
-
-        .exam-layout {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
-        }
-
-        .question-card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 25px;
-        }
-
-        .option-list {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .option-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .option-item:hover {
-            background: #f8fafc;
-        }
-
-        .timer-badge {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .q-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .q-num {
-            aspect-ratio: 1;
-            border: 1px solid var(--border-color);
-            background: #f8fafc;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .q-num.done { background: #dcfce7; color: #166534; border-color: #86efac; }
-        .q-num.current { background: #2563eb; color: white; border-color: #2563eb; }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.65);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .modal-box {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 420px;
-            text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+    <title>Sistem Ujian Online CBT - SMPN 1 Plampang</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex flex-col justify-between">
 
-    <div class="role-bar">
-        <span><i class="fa-solid fa-eye"></i> Mode Tampilan Demo:</span>
-        <div class="role-buttons">
-            <button class="role-btn active" onclick="switchView('viewLogin', this)">Login Siswa</button>
-            <button class="role-btn" onclick="switchView('viewAdmin', this)">Dashboard Admin / Rilis Token</button>
-            <button class="role-btn" onclick="switchView('viewExam', this)">Lembar Ujian Siswa</button>
+    <!-- Bilah Navigasi Atas -->
+    <div class="bg-gray-900 text-white p-2 flex justify-between items-center text-sm">
+        <div class="px-4">
+            <span class="font-semibold">Mode Tampilan Demo:</span>
+        </div>
+        <div class="space-x-2">
+            <!-- Tombol Dashboard Admin -->
+            <button onclick="bukaDashboardAdmin()" class="bg-indigo-700 hover:bg-indigo-600 px-3 py-1 rounded">
+                Dashboard Admin / Rilis Token
+            </button>
+
+            <!-- Tombol Reset Login Siswa -->
+            <button onclick="resetLoginSiswa()" class="bg-red-600 hover:bg-red-500 px-3 py-1 rounded">
+                Reset Login Siswa
+            </button>
+
+            <!-- Tombol Lembar Ujian Siswa -->
+            <button onclick="bukaLembarUjian()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">
+                Lembar Ujian Siswa
+            </button>
         </div>
     </div>
 
-    <nav class="navbar">
-        <div class="brand">
-            <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-            <div class="brand-text">
-                <h1>SMPN 1 PLAMPANG</h1>
-                <p>Sistem Ujian Online CBT & Bank Soal</p>
-            </div>
-        </div>
-        <div>
-            <span style="font-size:0.85rem; color: var(--text-muted);"><i class="fa-solid fa-circle-user"></i> Admin Ardin Yusuf</span>
-        </div>
-    </nav>
-
-    <div class="main-container">
-
-        <!-- 1. LOGIN VIEW -->
-        <div id="viewLogin" class="view-panel active">
-            <div class="login-box">
-                <h2>Login Ujian</h2>
-                <p>Masukkan Username / NISN dan Token Ujian</p>
-                <form onsubmit="event.preventDefault(); switchView('viewExam'); startExamSecurity();">
-                    <div class="form-group">
-                        <label>Username / NISN</label>
-                        <input type="text" class="form-control" required value="2026001">
-                    </div>
-                    <div class="form-group">
-                        <label>Password / Token Ujian</label>
-                        <input type="text" id="loginToken" class="form-control" required value="PLM01" style="text-transform:uppercase;">
-                    </div>
-                    <button type="submit" class="btn-submit"><i class="fa-solid fa-right-to-bracket"></i> Masuk Ujian</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- 2. DASHBOARD ADMIN VIEW -->
-        <div id="viewAdmin" class="view-panel">
-            <div class="admin-layout">
-                <div class="sidebar">
-                    <ul class="menu-list">
-                        <li class="menu-item active" onclick="switchAdminTab('tabToken', this)"><i class="fa-solid fa-key"></i> Rilis Token Ujian</li>
-                        <li class="menu-item" onclick="switchAdminTab('tabSoal', this)"><i class="fa-solid fa-book-open"></i> Bank Soal & Import</li>
-                        <li class="menu-item" onclick="switchAdminTab('tabNilai', this)"><i class="fa-solid fa-square-poll-vertical"></i> Rekap Nilai Siswa</li>
-                    </ul>
-                </div>
-
-                <div class="admin-content">
-                    
-                    <!-- TAB 1: RILIS TOKEN -->
-                    <div id="tabToken" class="admin-tab">
-                        <h2><i class="fa-solid fa-key"></i> Menu Rilis Token Ujian</h2>
-                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Generator token aktif untuk sesi ujian dan perbaikan kendala siswa.</p>
-
-                        <div class="card-box" style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <h4 style="color:var(--text-muted); font-size:0.85rem;">TOKEN AKTIF SAAT INI</h4>
-                                <div class="token-display" id="activeTokenDisplay">PLM01</div>
-                                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">Sinkronisasi Real-Time ke Google Sheets</p>
-                            </div>
-                            <div style="display:flex; gap:10px;">
-                                <button class="btn-action btn-warning" onclick="generateNewToken()"><i class="fa-solid fa-rotate"></i> Generate Token Baru</button>
-                                <button class="btn-action btn-word" onclick="copyToken()"><i class="fa-solid fa-copy"></i> Salin Token</button>
-                            </div>
-                        </div>
-
-                        <h4>Histori Rilis Token Hari Ini</h4>
-                        <table class="table-custom">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Kode Token</th>
-                                    <th>Waktu Rilis</th>
-                                    <th>Dibuat Oleh</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tokenHistoryBody">
-                                <tr>
-                                    <td>1</td>
-                                    <td><strong style="color:var(--primary)">PLM01</strong></td>
-                                    <td>27/10/2026 - 08:00 WITA</td>
-                                    <td>Admin Ardin Yusuf</td>
-                                    <td><span style="color:green; font-weight:600;">Aktif</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- TAB 2: BANK SOAL & IMPORT -->
-                    <div id="tabSoal" class="admin-tab" style="display:none;">
-                        <h2><i class="fa-solid fa-file-arrow-down"></i> Download Template & Import Soal</h2>
-                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Unduh format template untuk guru mapel, lalu unggah file soal ke database.</p>
-                        
-                        <div class="card-box">
-                            <h4 style="margin-bottom: 10px;">1. Unduh Format Template Soal</h4>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="btn-action btn-excel" onclick="downloadTemplate('excel')"><i class="fa-solid fa-file-excel"></i> Template Excel (.xlsx)</button>
-                                <button class="btn-action btn-word" onclick="downloadTemplate('word')"><i class="fa-solid fa-file-word"></i> Template Word (.docx)</button>
-                            </div>
-                        </div>
-
-                        <div class="card-box">
-                            <h4 style="margin-bottom: 10px;">2. Upload / Import Soal</h4>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="file" class="form-control" id="fileSoal" accept=".xlsx, .xls, .docx">
-                                <button class="btn-action btn-excel" onclick="simulateUpload()"><i class="fa-solid fa-upload"></i> Proses Import</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 3: REKAP NILAI -->
-                    <div id="tabNilai" class="admin-tab" style="display:none;">
-                        <h2><i class="fa-solid fa-square-poll-vertical"></i> Rekap Nilai Ujian Siswa</h2>
-                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Hasil pengerjaan ujian tersimpan otomatis di database Google Sheets.</p>
-                        <table class="table-custom">
-                            <thead>
-                                <tr>
-                                    <th>NISN</th>
-                                    <th>Nama Siswa</th>
-                                    <th>Kelas</th>
-                                    <th>Mata Pelajaran</th>
-                                    <th>Nilai Akhir</th>
-                                    <th>Status Ujian</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>2026001</td>
-                                    <td>Ahmad Faisal</td>
-                                    <td>VII-A</td>
-                                    <td>Bahasa Indonesia</td>
-                                    <td><strong>88.5</strong></td>
-                                    <td><span style="color:green; font-weight:600;">Selesai</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
+    <!-- Header Portal Utama -->
+    <header class="bg-indigo-900 text-white shadow-md p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-800 p-2 rounded-lg font-bold text-xl">SMPN 1</div>
+                <div>
+                    <h1 class="text-xl font-bold">SMPN 1 PLAMPANG</h1>
+                    <p class="text-sm text-indigo-200">Sistem Ujian Online CBT & Bank Soal</p>
                 </div>
             </div>
+            <span class="text-sm bg-indigo-800 px-3 py-1 rounded">Admin Ardin Yusuf</span>
         </div>
+    </header>
 
-    <!-- MODAL ANTI-CHEAT -->
-    <div id="cheatModal" class="modal-overlay">
-        <div class="modal-box">
-            <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: #ef4444; margin-bottom: 15px;"></i>
-            <h3 style="color: #1e3c72; margin-bottom: 10px;">Ujian Dikunci!</h3>
-            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Anda terdeteksi berpindah tab atau keluar dari halaman ujian. Minta <strong>Token Baru</strong> kepada Admin/Pengawas.</p>
-            <input type="text" id="retokenInput" class="form-control" placeholder="Masukkan Token Pengawas" style="margin-bottom: 15px; text-align: center; font-weight:700; text-transform:uppercase;">
-            <button class="btn-submit" onclick="verifyRetoken()">Buka Kunci Ujian</button>
+    <!-- Konten Utama Login Ujian -->
+    <main class="container mx-auto p-4 flex-grow flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Login Ujian</h2>
+            <p class="text-sm text-center text-gray-500 mb-6">Masukkan Username / NISN dan Token Ujian</p>
+
+            <form onsubmit="prosesLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">Username / NISN</label>
+                    <input type="text" id="username" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Contoh: 2026001" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">Password / Token Ujian</label>
+                    <input type="password" id="token" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Contoh: PLM01" required>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-800 hover:bg-indigo-900 text-white font-bold py-2 px-4 rounded-lg shadow">
+                    Masuk Ujian
+                </button>
+            </form>
         </div>
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-gray-500 text-sm">
+        &copy; 2026 SMPN 1 Plampang. All rights reserved.
+    </footer>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyiWyhEiBOYc0u2zLYYVpLJaaOgBu6w2P5iVkmLvfcEJCLGA-VxKe5r1OCmjMNciYxQ/exec";
+        // Fungsi Navigasi Atas
+        function bukaDashboardAdmin() {
+            window.location.href = "admin.html"; // Sesuaikan jika nama file admin berbeda
+        }
 
-        let currentActiveToken = "PLM01";
-        let currentQuestion = 1;
+        function bukaLembarUjian() {
+            window.location.href = "siswa.html";
+        }
 
-        // Data Simulasi Soal Ujian
-        const questionsData = {
-            1: {
-                title: "Soal No. 1",
-                text: "Kalimat berikut yang merupakan kalimat deskripsi yang tepat adalah...",
-                options: [
-                    "A. Candi Borobudur dibangun pada abad ke-8.",
-                    "B. Pantai Kuta memiliki pasir putih yang lembut dan air laut jernih membiru.",
-                    "C. Gunung Rinjani terletak di Pulau Lombok, Nusa Tenggara Barat.",
-                    "D. Indonesia memiliki keberagaman suku dan budaya."
-                ]
-            },
-            2: {
-                title: "Soal No. 2",
-                text: "Struktur teks laporan hasil observasi yang berisi pengenalan objek yang diamati disebut...",
-                options: [
-                    "A. Deskripsi bagian",
-                    "B. Pernyataan umum / klasifikasi",
-                    "C. Kesimpulan",
-                    "D. Argumen penjelas"
-                ]
-            },
-            3: {
-                title: "Soal No. 3",
-                text: "Antonim dari kata 'canggih' adalah...",
-                options: [
-                    "A. Modern",
-                    "B. Kuno / Sederhana",
-                    "C. Kompleks",
-                    "D. Mutakhir"
-                ]
-            },
-            4: {
-                title: "Soal No. 4",
-                text: "Penulisan gelar dan tanda baca yang benar dalam surat dinas sekolah adalah...",
-                options: [
-                    "A. Yth. Kepala SMPN 1 Plampang",
-                    "B. Kepada Yth: Kepala SMPN 1 Plampang.",
-                    "C. Yth, Kepala Sekolah SMPN 1 Plampang",
-                    "D. Kepada Yth., Kepala SMPN 1 Plampang"
-                ]
-            },
-            5: {
-                title: "Soal No. 5",
-                text: "Unsur intrinsik yang berupa pesan atau nasihat yang ingin disampaikan pengarang melalui cerita disebut...",
-                options: [
-                    "A. Tema",
-                    "B. Alur",
-                    "C. Amanat",
-                    "D. Latar"
-                ]
-            }
-        };
-
-        function switchView(viewId, btn) {
-            document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-
-            if(btn) {
-                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        // Fungsi Reset Sesi Login Siswa
+        function resetLoginSiswa() {
+            if (confirm("Apakah Anda yakin ingin mereset sesi login siswa? Data sesi aktif akan dibersihkan.")) {
+                localStorage.removeItem('tokenSiswa');
+                localStorage.removeItem('nisnSiswa');
+                alert("Sesi login siswa berhasil direset.");
+                location.reload();
             }
         }
 
-        function switchAdminTab(tabId, el) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
-            document.getElementById(tabId).style.display = 'block';
-            
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            el.classList.add('active');
-        }
+        // Fungsi Proses Login
+        function prosesLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const token = document.getElementById('token').value;
 
-        // Fungsi Navigasi Soal Ujian
-        function changeQuestion(num) {
-            currentQuestion = num;
-            const q = questionsData[num];
-            
-            document.getElementById('questionTitle').innerText = q.title;
-            document.getElementById('questionText').innerText = q.text;
-            
-            let optHTML = '';
-            q.options.forEach((opt, idx) => {
-                optHTML += `<label class="option-item"><input type="radio" name="opt"> ${opt}</label>`;
-            });
-            document.getElementById('optionList').innerHTML = optHTML;
+            // Simpan data sesi sementara ke localStorage
+            localStorage.setItem('nisnSiswa', username);
+            localStorage.setItem('tokenSiswa', token);
 
-            // Update status kotak navigasi
-            const grids = document.querySelectorAll('.q-num');
-            grids.forEach((el, index) => {
-                el.classList.remove('current');
-                if(index + 1 === num) {
-                    el.classList.add('current');
-                } else {
-                    el.classList.add('done');
-                }
-            });
-        }
-
-        function nextQuestion() {
-            if(currentQuestion < 5) {
-                changeQuestion(currentQuestion + 1);
-            }
-        }
-
-        function prevQuestion() {
-            if(currentQuestion > 1) {
-                changeQuestion(currentQuestion - 1);
-            }
-        }
-
-        function generateNewToken() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let newToken = '';
-            for (let i = 0; i < 5; i++) {
-                newToken += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            currentActiveToken = newToken;
-            document.getElementById('activeTokenDisplay').innerText = newToken;
-
-            fetch(API_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "updateToken",
-                    token: newToken,
-                    createdBy: "Admin Ardin Yusuf"
-                })
-            }).catch(err => console.error(err));
-
-            const tbody = document.getElementById('tokenHistoryBody');
-            const now = new Date().toLocaleTimeString('id-ID');
-            const newRow = `<tr>
-                <td>${tbody.children.length + 1}</td>
-                <td><strong style="color:var(--primary)">${newToken}</strong></td>
-                <td>27/10/2026 - ${now} WITA</td>
-                <td>Admin Ardin Yusuf</td>
-                <td><span style="color:green; font-weight:600;">Aktif</span></td>
-            </tr>`;
-            tbody.innerHTML = newRow + tbody.innerHTML;
-            alert("Token baru berhasil digenerate dan disinkronkan!");
-        }
-
-        function copyToken() {
-            navigator.clipboard.writeText(currentActiveToken);
-            alert("Token '" + currentActiveToken + "' berhasil disalin!");
-        }
-
-        function downloadTemplate(type) {
-            let filename = type === 'excel' ? 'Template_Soal_SMPN1Plampang.xlsx' : 'Template_Soal_SMPN1Plampang.docx';
-            let dummyContent = "Template Format Soal Ujian SMPN 1 Plampang";
-            let blob = new Blob([dummyContent], { type: "text/plain;charset=utf-8" });
-            let link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            link.click();
-        }
-
-        function simulateUpload() {
-            let fileInput = document.getElementById('fileSoal');
-            if(fileInput.files.length > 0) {
-                fetch(API_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        action: "saveQuestion",
-                        subject: "Bahasa Indonesia",
-                        questionText: "Contoh Soal Impor Otomatis",
-                        optionA: "A", optionB: "B", optionC: "C", optionD: "D",
-                        correctAnswer: "A"
-                    })
-                });
-                alert("File soal berhasil diimpor dan disimpan ke database Google Sheets!");
-            } else {
-                alert("Silakan pilih file Excel atau Word terlebih dahulu.");
-            }
-        }
-
-        function submitExamFinished() {
-            if(confirm("Apakah Anda yakin ingin menyelesaikan dan mengirim jawaban ujian?")) {
-                fetch(API_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        action: "submitExam",
-                        nisn: "2026001",
-                        fullName: "Ahmad Faisal",
-                        classGrade: "VII-A",
-                        subject: "Bahasa Indonesia",
-                        score: 88.5,
-                        status: "Selesai"
-                    })
-                });
-                alert("Ujian selesai! Nilai Anda telah direkap ke database.");
-                switchView('viewLogin');
-            }
-        }
-
-        let examActive = false;
-        function startExamSecurity() {
-            examActive = true;
-        }
-
-        document.addEventListener("visibilitychange", function() {
-            if (examActive && document.hidden) {
-                document.getElementById('cheatModal').style.display = 'flex';
-            }
-        });
-
-        function verifyRetoken() {
-            let inputTok = document.getElementById('retokenInput').value.trim().toUpperCase();
-            if(inputTok === currentActiveToken) {
-                document.getElementById('cheatModal').style.display = 'none';
-                document.getElementById('retokenInput').value = "";
-                alert("Ujian berhasil dibuka kembali. Silakan lanjutkan.");
-            } else {
-                alert("Token tidak valid! Minta token terbaru dari Admin.");
-            }
+            alert("Login berhasil! Mengarahkan ke ruang ujian...");
+            window.location.href = "siswa.html";
         }
     </script>
 </body>

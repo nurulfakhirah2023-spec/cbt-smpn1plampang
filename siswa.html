@@ -3,40 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruang Ujian Siswa - SMPN 1 PLAMPANG</title>
+    <title>Ruang Ujian Siswa - SMPN 1 Plampang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col justify-between">
+<body class="bg-gray-100 min-h-screen flex flex-col justify-between font-sans select-none" oncontextmenu="return false;">
 
-    <!-- Header Portal Siswa -->
+    <!-- Header Ruang Ujian -->
     <header class="bg-indigo-900 text-white shadow-md p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold">SMPN 1 PLAMPANG</h1>
-                <p class="text-sm text-indigo-200">Sistem Ujian Online (CBT) Siswa</p>
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-800 p-2 rounded-lg font-bold text-xl">SMPN 1</div>
+                <div>
+                    <h1 class="text-xl font-bold">SMPN 1 PLAMPANG</h1>
+                    <p class="text-xs text-indigo-200">Ruang Ujian Online (CBT) Siswa</p>
+                </div>
             </div>
-            <span id="info-nisn-token" class="text-sm bg-indigo-800 px-3 py-1 rounded">Memuat Sesi...</span>
+            <div class="flex items-center space-x-4">
+                <div class="bg-red-800 px-3 py-1 rounded text-xs font-semibold" id="warning-box">
+                    Peringatan Curang: <span id="warning-count">0</span> / 3
+                </div>
+                <div class="bg-indigo-800 px-4 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2">
+                    <i class="fas fa-user-circle text-yellow-400"></i>
+                    <span id="info-siswa">NISN: Loading...</span>
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- Konten Utama Ruang Ujian -->
-    <main class="container mx-auto p-4 flex-grow max-w-4xl">
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <div class="flex justify-between items-center border-b pb-4 mb-4">
-                <h2 id="nama-mapel" class="text-lg font-bold text-gray-800">Mata Pelajaran: Memuat...</h2>
-                <div id="timer" class="bg-red-100 text-red-700 px-4 py-2 rounded font-bold text-sm">Sisa Waktu: --:--:--</div>
+    <!-- Konten Utama Ujian -->
+    <main class="container mx-auto p-4 md:p-6 flex-grow max-w-4xl">
+        <!-- Card Informasi Ujian & Timer -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6 flex flex-col md:flex-row justify-between items-center border border-gray-100 space-y-4 md:space-y-0">
+            <div>
+                <h2 id="mapel-title" class="text-xl font-bold text-gray-800">Mata Pelajaran: Memuat...</h2>
+                <p class="text-sm text-gray-500">Pilihlah satu jawaban yang paling tepat pada setiap soal.</p>
             </div>
-
-            <!-- Area Soal -->
-            <div id="container-soal" class="space-y-6">
-                <p class="text-center text-gray-500 py-8">Sedang memuat soal dari database...</p>
+            <div class="bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded-lg font-mono font-bold text-lg flex items-center space-x-2">
+                <i class="fas fa-clock text-red-500"></i>
+                <span>Sisa Waktu: <span id="timer">--:--:--</span></span>
             </div>
         </div>
 
-        <div class="flex justify-end">
-            <button onclick="kirimJawaban()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-lg shadow">
-                Selesai & Kirim Jawaban
-            </button>
+        <!-- Card Lembar Soal -->
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 space-y-6">
+            <div id="loading-soal" class="text-center py-8 text-gray-500">
+                <i class="fas fa-spinner fa-spin text-3xl text-indigo-600 mb-2"></i>
+                <p>Sedang memuat data soal ujian...</p>
+            </div>
+
+            <div id="container-soal" class="hidden space-y-6">
+                <!-- Soal akan di-render secara dinamis di sini -->
+            </div>
+
+            <!-- Tombol Kirim Jawaban -->
+            <div class="pt-6 border-t flex justify-end">
+                <button onclick="kirimSemuaJawaban()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md flex items-center space-x-2 transition">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Selesai & Kirim Jawaban</span>
+                </button>
+            </div>
         </div>
     </main>
 
@@ -46,98 +72,155 @@
     </footer>
 
     <script>
-        // URL Web App Google Apps Script Anda yang sudah aktif
-        const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbyxoyjKcAWGgz6iQhGZC_IkHK_gBbif1Jb_Dex7StuGyvP5bC9_4oWKJ8R8KdZKOeoj/exec";
-
-        // Ambil token / NISN dari localStorage (disimpan saat login siswa)
-        const tokenSiswa = localStorage.getItem('tokenSiswa') || "OM7L4"; 
-        const nisnSiswa = localStorage.getItem('nisnSiswa') || "Shohibul Khaer";
-
-        document.getElementById('info-nisn-token').innerText = `NISN: ${nisnSiswa} | Token: ${tokenSiswa}`;
+        const API_URL = "ISI_DENGAN_URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA"; // Ganti dengan URL /exec Anda
+        
+        let dataJawaban = {};
+        let sisaWaktuDetik = 3600; // Default 60 Menit
+        let jumlahPeringatan = 0;
 
         window.onload = function() {
-            loadSoal(tokenSiswa);
-            aktifkanAntiCurang();
+            const nisn = localStorage.getItem('nisnSiswa') || 'Peserta Ujian';
+            const token = localStorage.getItem('tokenSiswa') || '-';
+            document.getElementById('info-siswa').innerText = `NISN: ${nisn} | Token: ${token}`;
+
+            loadSoalUjian();
+            startTimer();
+            aktifkanSistemAntiCurang();
         };
 
-        // 1. Fungsi Memuat Soal dari Google Sheets
-        function loadSoal(token) {
-            fetch(URL_WEB_APP, {
-                method: 'POST',
-                redirect: 'follow',
-                body: JSON.stringify({
-                    action: 'getSoal',
-                    token: token
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    document.getElementById('nama-mapel').innerText = "Mata Pelajaran: " + data.mapel;
-                    
-                    let htmlSoal = "";
-                    data.soal.forEach((s, index) => {
-                        htmlSoal += `
-                            <div class="p-4 border rounded-lg bg-gray-50">
-                                <p class="font-semibold text-gray-800 mb-3">Soal ${index + 1}: ${s.pertanyaan}</p>
-                                <div class="space-y-2">
-                                    <label class="block cursor-pointer"><input type="radio" name="soal_${s.id}" value="A" class="mr-2"> A. ${s.opsiA}</label>
-                                    <label class="block cursor-pointer"><input type="radio" name="soal_${s.id}" value="B" class="mr-2"> B. ${s.opsiB}</label>
-                                    <label class="block cursor-pointer"><input type="radio" name="soal_${s.id}" value="C" class="mr-2"> C. ${s.opsiC}</label>
-                                    <label class="block cursor-pointer"><input type="radio" name="soal_${s.id}" value="D" class="mr-2"> D. ${s.opsiD}</label>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    document.getElementById('container-soal').innerHTML = htmlSoal;
-                } else {
-                    document.getElementById('container-soal').innerHTML = `<p class="text-center text-red-600 font-semibold">${data.message}</p>`;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('container-soal').innerHTML = `<p class="text-center text-red-600 font-semibold">Gagal terhubung ke database server.</p>`;
-            });
-        }
-
-        // 2. Sistem Anti-Curang
-        function aktifkanAntiCurang() {
-            let jumlahPelanggaran = 0;
-            const MAKS_PELANGGARAN = 3;
-
-            // Deteksi pindah tab / minimize browser
+        // --- SISTEM ANTI-CURANG ---
+        function aktifkanSistemAntiCurang() {
+            // 1. Deteksi jika siswa pindah tab / keluar dari layar ujian
             document.addEventListener("visibilitychange", function() {
                 if (document.hidden) {
-                    jumlahPelanggaran++;
-                    if (jumlahPelanggaran < MAKS_PELANGGARAN) {
-                        alert(`Peringatan (${jumlahPelanggaran}/${MAKS_PELANGGARAN})! Anda dilarang meninggalkan halaman ujian.`);
+                    jumlahPeringatan++;
+                    document.getElementById('warning-count').innerText = jumlahPeringatan;
+                    
+                    if (jumlahPeringatan >= 3) {
+                        alert("PERINGATAN KERAS! Anda telah 3 kali keluar dari halaman ujian. Ujian Anda akan otomatis dikirim.");
+                        kirimSemuaJawaban();
                     } else {
-                        alert("Anda terdeteksi sering meninggalkan halaman. Ujian diserahkan otomatis.");
-                        kirimJawaban();
+                        alert(`PERINGATAN (${jumlahPeringatan}/3): Dilarang membuka tab atau aplikasi lain selama ujian berlangsung!`);
                     }
                 }
             });
 
-            // Blokir Klik Kanan
-            document.addEventListener("contextmenu", e => e.preventDefault());
-
-            // Blokir Tombol F12 & Shortcut Inspect/Copy
-            document.addEventListener("keydown", function(e) {
-                if (e.key === "F12" || (e.ctrlKey && ["u", "c", "v", "i", "I", "U", "C"].includes(e.key))) {
+            // 2. Blokir kombinasi tombol salin / inspect element
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'p' || e.key === 's'))) {
                     e.preventDefault();
-                    alert("Aksi ini dikunci selama ujian berlangsung!");
+                    alert("Aksi ini dilarang selama ujian!");
                     return false;
                 }
             });
         }
 
-        // 3. Fungsi Kirim Jawaban & Kembali ke Halaman Login/Utama
-        function kirimJawaban() {
-            if(confirm("Apakah Anda yakin ingin mengirim jawaban ujian ini?")) {
-                alert("Jawaban berhasil dikirim! Terima kasih telah mengikuti ujian.");
-                // Mengarahkan kembali ke halaman utama / portal login (index.html)
-                window.location.href = "index.html"; 
-            }
+        function startTimer() {
+            const timerElem = document.getElementById('timer');
+            const interval = setInterval(() => {
+                let jam = Math.floor(sisaWaktuDetik / 3600);
+                let menit = Math.floor((sisaWaktuDetik % 3600) / 60);
+                let detik = sisaWaktuDetik % 60;
+
+                timerElem.innerText = 
+                    `${jam.toString().padStart(2, '0')}:${menit.toString().padStart(2, '0')}:${detik.toString().padStart(2, '0')}`;
+
+                if (sisaWaktuDetik <= 0) {
+                    clearInterval(interval);
+                    alert("Waktu ujian telah habis! Jawaban Anda akan otomatis dikirim.");
+                    kirimSemuaJawaban();
+                } else {
+                    sisaWaktuDetik--;
+                }
+            }, 1000);
+        }
+
+        function loadSoalUjian() {
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: 'getSoalUjian' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loading-soal').classList.add('hidden');
+                if(data.status === 'success') {
+                    document.getElementById('mapel-title').innerText = "Mata Pelajaran: " + (data.mapel || "Ujian Online");
+                    renderSoal(data.soal);
+                } else {
+                    document.getElementById('container-soal').innerHTML = `<p class="text-red-500 text-center font-semibold">${data.message}</p>`;
+                    document.getElementById('container-soal').classList.remove('hidden');
+                }
+            })
+            .catch(err => {
+                document.getElementById('loading-soal').classList.add('hidden');
+                document.getElementById('container-soal').innerHTML = `<p class="text-red-500 text-center font-semibold">Gagal memuat soal. Periksa koneksi internet Anda.</p>`;
+                document.getElementById('container-soal').classList.remove('hidden');
+            });
+        }
+
+        function renderSoal(listSoal) {
+            const container = document.getElementById('container-soal');
+            let html = '';
+
+            listSoal.forEach((item, index) => {
+                html += `
+                <div class="border-b pb-6 last:border-b-0 space-y-3">
+                    <p class="font-semibold text-gray-800 text-base leading-relaxed">
+                        <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-sm font-bold mr-2">${index + 1}</span>
+                        ${item.pertanyaan}
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pl-4">
+                        <label class="flex items-center space-x-3 p-3 border rounded-lg hover:bg-indigo-50 cursor-pointer transition">
+                            <input type="radio" name="soal_${item.id}" value="A" onchange="simpanJawaban('${item.id}', 'A')" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm font-medium text-gray-700">A. ${item.opsiA}</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border rounded-lg hover:bg-indigo-50 cursor-pointer transition">
+                            <input type="radio" name="soal_${item.id}" value="B" onchange="simpanJawaban('${item.id}', 'B')" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm font-medium text-gray-700">B. ${item.opsiB}</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border rounded-lg hover:bg-indigo-50 cursor-pointer transition">
+                            <input type="radio" name="soal_${item.id}" value="C" onchange="simpanJawaban('${item.id}', 'C')" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm font-medium text-gray-700">C. ${item.opsiC}</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border rounded-lg hover:bg-indigo-50 cursor-pointer transition">
+                            <input type="radio" name="soal_${item.id}" value="D" onchange="simpanJawaban('${item.id}', 'D')" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm font-medium text-gray-700">D. ${item.opsiD}</span>
+                        </label>
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+            container.classList.remove('hidden');
+        }
+
+        function simpanJawaban(soalId, pilihan) {
+            dataJawaban[soalId] = pilihan;
+        }
+
+        function kirimSemuaJawaban() {
+            if (!confirm("Apakah Anda yakin ingin menyelesaikan ujian dan mengirim semua jawaban?")) return;
+
+            const nisn = localStorage.getItem('nisnSiswa') || '2026001';
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: 'submitJawaban',
+                    nisn: nisn,
+                    jawaban: dataJawaban
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                alert("Jawaban ujian Anda berhasil terkirim!");
+                window.location.href = "index.html";
+            })
+            .catch(err => {
+                alert("Terjadi kesalahan saat menyimpan jawaban, silakan coba lagi.");
+            });
         }
     </script>
 </body>

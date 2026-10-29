@@ -8,25 +8,14 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col justify-between">
 
-    <!-- Bilah Navigasi Atas -->
+    <!-- Bilah Navigasi Atas (Hanya Menyisakan Dashboard Admin) -->
     <div class="bg-gray-900 text-white p-2 flex justify-between items-center text-sm">
         <div class="px-4">
-            <span class="font-semibold">Mode Tampilan Demo:</span>
+            <span class="font-semibold">Portal Ujian Online SMPN 1 Plampang</span>
         </div>
         <div class="space-x-2">
-            <!-- Tombol Dashboard Admin -->
-            <button onclick="bukaDashboardAdmin()" class="bg-indigo-700 hover:bg-indigo-600 px-3 py-1 rounded">
+            <button onclick="bukaDashboardAdmin()" class="bg-indigo-700 hover:bg-indigo-600 px-3 py-1 rounded font-medium">
                 Dashboard Admin / Rilis Token
-            </button>
-
-            <!-- Tombol Reset Login Siswa -->
-            <button onclick="resetLoginSiswa()" class="bg-red-600 hover:bg-red-500 px-3 py-1 rounded">
-                Reset Login Siswa
-            </button>
-
-            <!-- Tombol Lembar Ujian Siswa -->
-            <button onclick="bukaLembarUjian()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">
-                Lembar Ujian Siswa
             </button>
         </div>
     </div>
@@ -75,32 +64,18 @@
     </footer>
 
     <script>
-        // Fungsi Navigasi Atas
+        // Fungsi Membuka Dashboard Admin
         function bukaDashboardAdmin() {
-            window.location.href = "admin.html"; // Sesuaikan jika nama file admin berbeda
+            window.location.href = "admin.html";
         }
 
-        function bukaLembarUjian() {
-            window.location.href = "siswa.html";
-        }
-
-        // Fungsi Reset Sesi Login Siswa
-        function resetLoginSiswa() {
-            if (confirm("Apakah Anda yakin ingin mereset sesi login siswa? Data sesi aktif akan dibersihkan.")) {
-                localStorage.removeItem('tokenSiswa');
-                localStorage.removeItem('nisnSiswa');
-                alert("Sesi login siswa berhasil direset.");
-                location.reload();
-            }
-        }
-
-        // Fungsi Proses Login
+        // Fungsi Proses Login Siswa
         function prosesLogin(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const token = document.getElementById('token').value;
 
-            // Simpan data sesi sementara ke localStorage
+            // Simpan sesi sementara ke localStorage
             localStorage.setItem('nisnSiswa', username);
             localStorage.setItem('tokenSiswa', token);
 

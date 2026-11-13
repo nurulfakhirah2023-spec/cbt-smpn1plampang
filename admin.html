@@ -6,6 +6,8 @@
     <title>Admin Dashboard - CBT SMPN 1 Plampang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SheetJS untuk membaca file Excel (.xlsx) di browser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body class="bg-gray-100 font-sans antialiased flex h-screen overflow-hidden">
 
@@ -28,6 +30,9 @@
                 </button>
                 <button onclick="switchTab('token')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-lg text-indigo-200 hover:bg-indigo-800 hover:text-white">
                     <i class="fas fa-key w-5"></i><span>Rilis Token Ujian</span>
+                </button>
+                <button onclick="switchTab('soal')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-lg text-indigo-200 hover:bg-indigo-800 hover:text-white">
+                    <i class="fas fa-book-open w-5"></i><span>Kelola & Import Soal</span>
                 </button>
                 <button onclick="switchTab('hasil')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-lg text-indigo-200 hover:bg-indigo-800 hover:text-white">
                     <i class="fas fa-file-invoice w-5"></i><span>Hasil & Nilai Ujian</span>
@@ -80,7 +85,7 @@
                 </div>
             </section>
 
-            <!-- TAB 2: MONITORING SISWA & CENTANG RESET LOGIN -->
+            <!-- TAB 2: MONITORING SISWA & RESET SESI -->
             <section id="section-monitoring" class="tab-section hidden space-y-4">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <div class="flex justify-between items-center mb-4">
@@ -127,7 +132,50 @@
                 </div>
             </section>
 
-            <!-- TAB 4: HASIL UJIAN -->
+            <!-- TAB 4: KELOLA & IMPORT SOAL -->
+            <section id="section-soal" class="tab-section hidden space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2"><i class="fas.fa-file-excel text-green-600 mr-2"></i>Import Bank Soal dari Excel (.xlsx)</h3>
+                    <p class="text-sm text-gray-500 mb-4">Unggah file Excel berisi soal ujian dengan urutan kolom: <b>Pertanyaan | Opsi A | Opsi B | Opsi C | Opsi D | Kunci</b></p>
+                    
+                    <div class="flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-4 p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+                        <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <button onclick="prosesImportExcel()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-sm font-semibold whitespace-nowrap flex items-center space-x-2">
+                            <i class="fas fa-upload"></i><span>Proses & Pratinjau Soal</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pratinjau Soal yang di-import -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">Pratinjau Soal Siap Upload</h3>
+                        <button onclick="simpanSoalKeDatabase()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2">
+                            <i class="fas fa-cloud-upload-alt"></i><span>Simpan ke Database (Google Sheets)</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-xs uppercase font-semibold border-b">
+                                    <th class="p-3">No</th>
+                                    <th class="p-3">Pertanyaan</th>
+                                    <th class="p-3">Pilihan A</th>
+                                    <th class="p-3">Pilihan B</th>
+                                    <th class="p-3">Pilihan C</th>
+                                    <th class="p-3">Pilihan D</th>
+                                    <th class="p-3">Kunci</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-preview-soal" class="divide-y text-sm text-gray-700">
+                                <tr><td colspan="7" class="p-4 text-center text-gray-400">Belum ada file Excel yang diunggah.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: HASIL UJIAN -->
             <section id="section-hasil" class="tab-section hidden space-y-4">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <div class="flex justify-between items-center mb-4">
@@ -165,6 +213,8 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby9ikKOP_inH5BSVPbkFz64_pxO0mhPDTk0QnvFfUmxepF-j6G-zOH3DMYN_fK2d9LF/exec"; 
 
+        let parsedSoalData = [];
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab-section').forEach(el => el.classList.add('hidden'));
             document.getElementById('section-' + tabName).classList.remove('hidden');
@@ -173,6 +223,7 @@
                 'dashboard': 'Dashboard & Status Ujian',
                 'monitoring': 'Monitoring & Reset Login Siswa',
                 'token': 'Rilis Token Ujian',
+                'soal': 'Kelola & Import Bank Soal',
                 'hasil': 'Hasil & Nilai Ujian'
             };
             document.getElementById('tab-title').innerText = titles[tabName];
@@ -216,10 +267,92 @@
             document.getElementById('tabel-siswa-aktif').innerHTML = html;
         }
 
-        // Fungsi Baru untuk Menarik Hasil & Nilai Ujian dari Google Sheets / Server
+        // Fungsi Membaca File Excel untuk Import Soal
+        function prosesImportExcel() {
+            const fileInput = document.getElementById('excel-file-input');
+            if (fileInput.files.length === 0) {
+                alert('Silakan pilih file Excel (.xlsx) terlebih dahulu!');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                parsedSoalData = [];
+                let html = '';
+
+                // Lewati baris pertama (header)
+                for (let i = 1; i < json.length; i++) {
+                    let row = json[i];
+                    if (row && row.length > 0 && row[0]) {
+                        let soalItem = {
+                            id: 'Q' + i,
+                            pertanyaan: row[0] || '',
+                            opsiA: row[1] || '',
+                            opsiB: row[2] || '',
+                            opsiC: row[3] || '',
+                            opsiD: row[4] || '',
+                            kunci: row[5] || 'A'
+                        };
+                        parsedSoalData.push(soalItem);
+
+                        html += `<tr class="hover:bg-gray-50">
+                            <td class="p-3">${i}</td>
+                            <td class="p-3 font-medium">${soalItem.pertanyaan}</td>
+                            <td class="p-3">${soalItem.opsiA}</td>
+                            <td class="p-3">${soalItem.opsiB}</td>
+                            <td class="p-3">${soalItem.opsiC}</td>
+                            <td class="p-3">${soalItem.opsiD}</td>
+                            <td class="p-3 font-bold text-indigo-600">${soalItem.kunci}</td>
+                        </tr>`;
+                    }
+                }
+
+                if (parsedSoalData.length > 0) {
+                    document.getElementById('tabel-preview-soal').innerHTML = html;
+                    alert(`Berhasil memuat ${parsedSoalData.length} soal dari file Excel. Silakan klik "Simpan ke Database".`);
+                } else {
+                    document.getElementById('tabel-preview-soal').innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500">Format file Excel tidak sesuai atau kosong.</td></tr>`;
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function simpanSoalKeDatabase() {
+            if (parsedSoalData.length === 0) {
+                alert('Belum ada data soal yang diproses dari Excel!');
+                return;
+            }
+
+            if (!confirm(`Simpan ${parsedSoalData.length} soal ke database ujian?`)) return;
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: 'importSoal',
+                    soalList: parsedSoalData
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                alert('Bank soal berhasil disimpan ke database Google Sheets!');
+            })
+            .catch(err => {
+                alert('Gagal menyimpan soal ke server.');
+            });
+        }
+
         function loadHasilUjian() {
             const tbody = document.getElementById('tabel-hasil-ujian');
-            tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i> Mengambil data nilai dari database...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i> Mengambil data nilai...</td></tr>`;
 
             fetch(API_URL, {
                 method: 'POST',
@@ -246,7 +379,7 @@
                 }
             })
             .catch(err => {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Gagal memuat data dari server. Periksa koneksi internet Anda.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Gagal memuat data dari server.</td></tr>`;
             });
         }
 

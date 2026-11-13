@@ -100,24 +100,21 @@
             aktifkanSistemAntiCurang();
         };
 
-        // --- SISTEM ANTI-CURANG (BARU: SEKALI KELUAR TAB LANGSUNG BLOKIR & MINTA TOKEN) ---
+       // --- SISTEM ANTI-CURANG (SEKALI KELUAR TAB LANGSUNG TENDANG) ---
 function aktifkanSistemAntiCurang() {
     document.addEventListener("visibilitychange", function() {
         if (document.hidden) {
-            // Hapus cache sesi ujian di HP siswa agar tidak bisa curang
             const nisn = localStorage.getItem('nisnSiswa') || 'peserta';
             localStorage.removeItem('cbt_cache_soal');
             localStorage.removeItem('cbt_cache_mapel');
             localStorage.removeItem('cbt_jawaban_' + nisn);
-            localStorage.removeItem('tokenSiswa'); // Token lama langsung hangus!
+            localStorage.removeItem('tokenSiswa');
 
-            // Paksa kirim status pelanggaran atau langsung tendang ke halaman login
-            alert("PELANGGARAN TERDETEKSI! Anda terdeteksi keluar dari halaman ujian. Sesi Anda dihentikan dan token Anda telah hangus. Silakan minta token baru kepada pengawas/admin untuk masuk kembali.");
-            
-            // Arahkan kembali ke halaman login utama
+            alert("PELANGGARAN TERDETEKSI! Anda keluar dari halaman ujian. Sesi dihentikan dan token Anda telah hangus.");
             window.location.href = "index.html";
         }
     });
+}
 
     // Blokir kombinasi tombol inspect element / copy-paste
     document.addEventListener('keydown', function(e) {

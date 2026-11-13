@@ -130,8 +130,32 @@
             <!-- TAB 4: HASIL UJIAN -->
             <section id="section-hasil" class="tab-section hidden space-y-4">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Daftar Hasil Ujian Siswa</h3>
-                    <p class="text-gray-500 text-sm">Data hasil nilai akhir siswa yang telah mengirimkan jawaban.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">Daftar Hasil Ujian Siswa</h3>
+                            <p class="text-gray-500 text-sm">Rekap nilai akhir siswa yang telah mengirimkan jawaban.</p>
+                        </div>
+                        <button onclick="loadHasilUjian()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2">
+                            <i class="fas fa-sync"></i><span>Muat Ulang Data</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-xs uppercase font-semibold border-b">
+                                    <th class="p-3">No</th>
+                                    <th class="p-3">NISN</th>
+                                    <th class="p-3">Nama Siswa</th>
+                                    <th class="p-3">Mata Pelajaran</th>
+                                    <th class="p-3">Nilai Akhir</th>
+                                    <th class="p-3">Waktu Kirim</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-hasil-ujian" class="divide-y text-sm text-gray-700">
+                                <tr><td colspan="6" class="p-4 text-center text-gray-400">Klik "Muat Ulang Data" untuk menarik nilai siswa.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -139,7 +163,7 @@
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby9ikKOP_inH5BSVPbkFz64_pxO0mhPDTk0QnvFfUmxepF-j6G-zOH3DMYN_fK2d9LF/exec"; // Ganti dengan URL /exec Anda
+        const API_URL = "https://script.google.com/macros/s/AKfycby9ikKOP_inH5BSVPbkFz64_pxO0mhPDTk0QnvFfUmxepF-j6G-zOH3DMYN_fK2d9LF/exec"; 
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-section').forEach(el => el.classList.add('hidden'));
@@ -154,10 +178,11 @@
             document.getElementById('tab-title').innerText = titles[tabName];
 
             if(tabName === 'monitoring') loadSiswaAktif();
+            if(tabName === 'hasil') loadHasilUjian();
         }
 
         function toggleCheckAll(source) {
-            checkboxes = document.getElementsByName('siswa-check');
+            const checkboxes = document.getElementsByName('siswa-check');
             for(var i=0, n=checkboxes.length;i<n;i++) {
                 checkboxes[i].checked = source.checked;
             }
@@ -173,7 +198,6 @@
         }
 
         function loadSiswaAktif() {
-            // Simulasi/Penarikan data siswa dari backend
             const demoData = [
                 {id: '1', nisn: '2026001', nama: 'Shohibul Khaer', status: 'Mengerjakan', waktu: '08:00'},
                 {id: '2', nisn: '2026002', nama: 'Ahmad Dahlan', status: 'Mengerjakan', waktu: '08:05'}
@@ -190,6 +214,49 @@
                 </tr>`;
             });
             document.getElementById('tabel-siswa-aktif').innerHTML = html;
+        }
+
+        // Fungsi Baru untuk Menarik Hasil & Nilai Ujian dari Google Sheets / Server
+        function loadHasilUjian() {
+            const tbody = document.getElementById('tabel-hasil-ujian');
+            tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i> Mengambil data nilai dari database...</td></tr>`;
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: 'getHasilUjian' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success' && data.hasil && data.hasil.length > 0) {
+                    let html = '';
+                    data.hasil.forEach((item, index) => {
+                        html += `<tr class="hover:bg-gray-50">
+                            <td class="p-3">${index + 1}</td>
+                            <td class="p-3 font-medium">${item.nisn}</td>
+                            <td class="p-3 font-semibold">${item.nama || '-'}</td>
+                            <td class="p-3">${item.mapel || 'Ujian Online'}</td>
+                            <td class="p-3"><span class="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-bold">${item.nilai}</span></td>
+                            <td class="p-3 text-gray-500 text-xs">${item.waktuKirim || '-'}</td>
+                        </tr>`;
+                    });
+                    tbody.innerHTML = html;
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada data siswa yang mengirimkan jawaban.</td></tr>`;
+                }
+            })
+            .catch(err => {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Gagal memuat data dari server. Periksa koneksi internet Anda.</td></tr>`;
+            });
+        }
+
+        function simpanToken() {
+            const token = document.getElementById('token-input').value;
+            if(!token) {
+                alert('Token tidak boleh kosong!');
+                return;
+            }
+            alert(`Token ujian "${token}" berhasil dirilis ke sistem!`);
         }
 
         function prosesResetCentang() {

@@ -100,21 +100,34 @@
             aktifkanSistemAntiCurang();
         };
 
-        // --- SISTEM ANTI-CURANG ---
-        function aktifkanSistemAntiCurang() {
-            document.addEventListener("visibilitychange", function() {
-                if (document.hidden) {
-                    jumlahPeringatan++;
-                    document.getElementById('warning-count').innerText = jumlahPeringatan;
-                    
-                    if (jumlahPeringatan >= 3) {
-                        alert("PERINGATAN KERAS! Anda telah 3 kali keluar dari halaman ujian. Ujian Anda akan otomatis dikirim.");
-                        kirimSemuaJawaban();
-                    } else {
-                        alert(`PERINGATAN (${jumlahPeringatan}/3): Dilarang membuka tab atau aplikasi lain selama ujian berlangsung!`);
-                    }
-                }
-            });
+        // --- SISTEM ANTI-CURANG (BARU: SEKALI KELUAR TAB LANGSUNG BLOKIR & MINTA TOKEN) ---
+function aktifkanSistemAntiCurang() {
+    document.addEventListener("visibilitychange", function() {
+        if (document.hidden) {
+            // Hapus cache sesi ujian di HP siswa agar tidak bisa curang
+            const nisn = localStorage.getItem('nisnSiswa') || 'peserta';
+            localStorage.removeItem('cbt_cache_soal');
+            localStorage.removeItem('cbt_cache_mapel');
+            localStorage.removeItem('cbt_jawaban_' + nisn);
+            localStorage.removeItem('tokenSiswa'); // Token lama langsung hangus!
+
+            // Paksa kirim status pelanggaran atau langsung tendang ke halaman login
+            alert("PELANGGARAN TERDETEKSI! Anda terdeteksi keluar dari halaman ujian. Sesi Anda dihentikan dan token Anda telah hangus. Silakan minta token baru kepada pengawas/admin untuk masuk kembali.");
+            
+            // Arahkan kembali ke halaman login utama
+            window.location.href = "index.html";
+        }
+    });
+
+    // Blokir kombinasi tombol inspect element / copy-paste
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'p' || e.key === 's'))) {
+            e.preventDefault();
+            alert("Aksi ini dilarang selama ujian!");
+            return false;
+        }
+    });
+}
 
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'F12' || (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'p' || e.key === 's'))) {

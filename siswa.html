@@ -213,10 +213,22 @@
             localStorage.setItem('cbt_jawaban_' + nisn, JSON.stringify(dataJawaban));
         }
 
-        function kirimSemuaJawaban() {
+       function kirimSemuaJawaban() {
             if (!confirm("Apakah Anda yakin ingin menyelesaikan ujian dan mengirim semua jawaban?")) return;
 
             const nisn = localStorage.getItem('nisnSiswa') || '2026001';
+            const kelas = localStorage.getItem('kelasSiswa') || 'VII'; // Mengambil data kelas siswa
+            
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: 'submitJawaban',
+                    nisn: nisn,
+                    kelas: kelas, // Mengirim data kelas ke backend
+                    jawaban: dataJawaban
+                })
+            })
             
             fetch(API_URL, {
                 method: 'POST',

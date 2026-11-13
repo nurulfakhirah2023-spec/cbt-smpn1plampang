@@ -5,81 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Ujian Online CBT - SMPN 1 Plampang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col justify-between">
+<body class="bg-gray-100 min-h-screen flex flex-col justify-between font-sans">
 
-    <!-- Bilah Navigasi Atas (Hanya Menyisakan Dashboard Admin) -->
-    <div class="bg-gray-900 text-white p-2 flex justify-between items-center text-sm">
-        <div class="px-4">
-            <span class="font-semibold">Portal Ujian Online SMPN 1 Plampang</span>
+    <!-- Header Portal Bersih Khusus Ujian -->
+    <header class="bg-indigo-900 text-white shadow-md">
+        <div class="bg-indigo-950 px-6 py-1.5 text-xs text-indigo-200 flex justify-between items-center">
+            <span>Portal Ujian Online SMPN 1 Plampang</span>
+            <span>Tahun Pelajaran 2026/2027</span>
         </div>
-        <div class="space-x-2">
-            <button onclick="bukaDashboardAdmin()" class="bg-indigo-700 hover:bg-indigo-600 px-3 py-1 rounded font-medium">
-                Dashboard Admin / Rilis Token
-            </button>
-        </div>
-    </div>
-
-    <!-- Header Portal Utama -->
-    <header class="bg-indigo-900 text-white shadow-md p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-indigo-800 p-2 rounded-lg font-bold text-xl">SMPN 1</div>
-                <div>
-                    <h1 class="text-xl font-bold">SMPN 1 PLAMPANG</h1>
-                    <p class="text-sm text-indigo-200">Sistem Ujian Online CBT & Bank Soal</p>
-                </div>
+        <div class="container mx-auto px-6 py-4 flex items-center space-x-4">
+            <div class="bg-indigo-800 p-2.5 rounded-lg font-bold text-xl tracking-wider shadow-inner">SMPN 1</div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-wide">SMPN 1 PLAMPANG</h1>
+                <p class="text-xs md:text-sm text-indigo-200">Sistem Ujian Online CBT & Bank Soal</p>
             </div>
-            <span class="text-sm bg-indigo-800 px-3 py-1 rounded">Admin Ardin Yusuf</span>
         </div>
     </header>
 
-    <!-- Konten Utama Login Ujian -->
-    <main class="container mx-auto p-4 flex-grow flex items-center justify-center">
-        <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Login Ujian</h2>
-            <p class="text-sm text-center text-gray-500 mb-6">Masukkan Username / NISN dan Token Ujian</p>
+    <!-- Form Login Tengah -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md border border-gray-100">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Login Ujian</h2>
+                <p class="text-sm text-gray-500 mt-1">Masukkan NISN, Kelas, dan Token Ujian Anda</p>
+            </div>
 
             <form onsubmit="prosesLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-gray-700 text-sm font-semibold mb-2">Username / NISN</label>
-                    <input type="text" id="username" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Contoh: 2026001" required>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Username / NISN</label>
+                    <input type="text" id="username" required placeholder="Contoh: 2026001" 
+                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 text-sm font-semibold mb-2">Password / Token Ujian</label>
-                    <input type="password" id="token" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Contoh: PLM01" required>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Kelas</label>
+                    <select id="kelas" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-white">
+                        <option value="VII-A">Kelas VII-A</option>
+                        <option value="VII-B">Kelas VII-B</option>
+                        <option value="VII-C">Kelas VII-C</option>
+                        <option value="VIII-A">Kelas VIII-A</option>
+                        <option value="VIII-B">Kelas VIII-B</option>
+                        <option value="VIII-C">Kelas VIII-C</option>
+                        <option value="IX-A">Kelas IX-A</option>
+                        <option value="IX-B">Kelas IX-B</option>
+                        <option value="IX-C">Kelas IX-C</option>
+                    </select>
                 </div>
 
-                <button type="submit" class="w-full bg-indigo-800 hover:bg-indigo-900 text-white font-bold py-2 px-4 rounded-lg shadow">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Password / Token Ujian</label>
+                    <input type="password" id="password" required placeholder="Contoh: PLM01" 
+                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <button type="submit" id="btn-login" class="w-full bg-indigo-800 hover:bg-indigo-900 text-white font-bold py-3 rounded-lg shadow-md transition duration-200 mt-2">
                     Masuk Ujian
                 </button>
             </form>
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="text-center py-4 text-gray-500 text-sm">
         &copy; 2026 SMPN 1 Plampang. All rights reserved.
     </footer>
 
     <script>
-        // Fungsi Membuka Dashboard Admin
-        function bukaDashboardAdmin() {
-            window.location.href = "admin.html";
-        }
+        const API_URL = "https://script.google.com/macros/s/AKfycby9ikKOP_inH5BSVPbkFz64_pxO0mhPDTk0QnvFfUmxepF-j6G-zOH3DMYN_fK2d9LF/exec";
 
-        // Fungsi Proses Login Siswa
         function prosesLogin(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const token = document.getElementById('token').value;
+            const user = document.getElementById('username').value.trim();
+            const kelas = document.getElementById('kelas').value;
+            const pass = document.getElementById('password').value.trim();
+            const btn = document.getElementById('btn-login');
 
-            // Simpan sesi sementara ke localStorage
-            localStorage.setItem('nisnSiswa', username);
-            localStorage.setItem('tokenSiswa', token);
+            btn.innerText = "Memverifikasi...";
+            btn.disabled = true;
 
-            alert("Login berhasil! Mengarahkan ke ruang ujian...");
+            // Cek jika yang login adalah Admin (sesuai data sheet Users Bapak)
+            if (user.toLowerCase() === 'ardin' && pass === 'admin123') {
+                localStorage.setItem('roleUser', 'Admin');
+                window.location.href = "admin.html";
+                return;
+            }
+
+            // Jika Siswa: Simpan identitas & kelas ke localStorage untuk dikirim bersama jawaban nanti
+            localStorage.setItem('nisnSiswa', user);
+            localStorage.setItem('kelasSiswa', kelas);
+            localStorage.setItem('tokenSiswa', pass.toUpperCase());
+
+            // Arahkan ke ruang ujian siswa
             window.location.href = "siswa.html";
         }
     </script>
